@@ -284,7 +284,7 @@ public class TicketingSystemGUI extends JFrame {
             Trip trip = manager.findTripByCode(tripCode);
             if (trip != null) {
                 double original = (col == 6) ? trip.getEconomyPrice() : trip.getBusinessPrice();
-                setTableValue(tripTableModel, isSyncingTripTable, row, col, formatPrice(original));
+                setTripTableValue(row, col, formatPrice(original));
                 isSyncingTripTable = false;
                 JOptionPane.showMessageDialog(this,
                         "Invalid price. Please enter a positive number.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -301,7 +301,7 @@ public class TicketingSystemGUI extends JFrame {
         else
             trip.setBusinessPrice(price);
 
-        setTableValue(tripTableModel, isSyncingTripTable, row, col, formatPrice(price));
+        setTripTableValue(row, col, formatPrice(price));
         isSyncingTripTable = false;
         updatePricePreview();
         persistTrips();
@@ -320,7 +320,7 @@ public class TicketingSystemGUI extends JFrame {
             if (seats < 0 || seats > trip.getTotalSeats())
                 throw new NumberFormatException();
         } catch (NumberFormatException ex) {
-            setTableValue(tripTableModel, isSyncingTripTable, row, 5, String.valueOf(trip.getAvailableSeats()));
+                setTripTableValue(row, 5, String.valueOf(trip.getAvailableSeats()));
             isSyncingTripTable = false;
             JOptionPane.showMessageDialog(this,
                     "Invalid seat value. Enter a number from 0 to " + trip.getTotalSeats() + ".",
@@ -329,7 +329,7 @@ public class TicketingSystemGUI extends JFrame {
         }
 
         trip.setAvailableSeats(seats);
-        setTableValue(tripTableModel, isSyncingTripTable, row, 5, String.valueOf(seats));
+        setTripTableValue(row, 5, String.valueOf(seats));
         isSyncingTripTable = false;
         persistTrips();
     }
@@ -813,9 +813,9 @@ public class TicketingSystemGUI extends JFrame {
      * Wraps the isSyncing guard and setValueAt call into one place to avoid
      * repeating the flag management at every inline-edit correction site.
      */
-    private void setTableValue(DefaultTableModel model, boolean syncFlag, int row, int col, Object value) {
-        syncFlag = true;
-        model.setValueAt(value, row, col);
+    private void setTripTableValue(int row, int col, Object value) {
+        isSyncingTripTable = true;
+        tripTableModel.setValueAt(value, row, col);
     }
 
     // -------------------------------------------------------------------------
