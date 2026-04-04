@@ -194,7 +194,7 @@ public class TicketingSystemGUI extends JFrame {
         fromCombo = styledCombo(locations);
         toCombo = styledCombo(locations);
 
-        JPanel leftFilters = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        JPanel leftFilters = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 15));
         leftFilters.setBackground(PANEL_BG);
         leftFilters.add(makeLabel("Origin:", Font.BOLD, 14, TEXT_DARK));
         leftFilters.add(fromCombo);
@@ -213,10 +213,10 @@ public class TicketingSystemGUI extends JFrame {
         });
         refreshBtn.addActionListener(e -> refreshFromFiles(true));
 
-        JPanel rightActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        JPanel rightActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 15));
         rightActions.setBackground(PANEL_BG);
-        rightActions.add(showAllBtn);
         rightActions.add(refreshBtn);
+        rightActions.add(showAllBtn);
         rightActions.add(searchBtn);
 
         filterBar.add(leftFilters, BorderLayout.WEST);
@@ -374,17 +374,14 @@ public class TicketingSystemGUI extends JFrame {
         form.add(priceLabel, gc);
 
         JButton clearBtn = styledButton("Clear", PANEL_BG, TEXT_DARK);
-        JButton refreshBtn = styledButton("Refresh", PANEL_BG, TEXT_DARK);
         JButton bookBtn = styledButton("Book Now", SUCCESS, Color.WHITE);
 
         clearBtn.addActionListener(e -> clearBookForm());
-        refreshBtn.addActionListener(e -> refreshFromFiles(true));
         bookBtn.addActionListener(e -> confirmBooking());
 
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btns.setBackground(PANEL_BG);
         btns.add(clearBtn);
-        btns.add(refreshBtn);
         btns.add(bookBtn);
 
         gc.gridx = 0;
@@ -487,11 +484,11 @@ public class TicketingSystemGUI extends JFrame {
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(PANEL_BG);
 
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 15));
         rightPanel.setBackground(PANEL_BG);
-        rightPanel.add(refreshBtn);
         rightPanel.add(makeLabel("Search:", Font.PLAIN, 13, TEXT_DARK));
         rightPanel.add(searchField);
+        rightPanel.add(refreshBtn);
         top.add(rightPanel, BorderLayout.EAST);
 
         String[] cols = { "Code", "Name", "Date", "From", "To", "Seat", "Class", "Type", "Fare", "Status" };
@@ -693,9 +690,6 @@ public class TicketingSystemGUI extends JFrame {
             loadDataFromFiles();
             syncFileTimestamps();
             refreshVisibleData();
-            if (showFeedback) {
-                JOptionPane.showMessageDialog(this, "Data refreshed from files.");
-            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Unable to refresh data from files.", "Refresh Error", JOptionPane.ERROR_MESSAGE);
