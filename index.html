@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>File Viewer</title>
+</head>
+
+<body style="background: black; color: white; font-family: monospace; user-select: none;" x-data="app()"
+    x-init="fetchData()">
+
+    <div x-show="!selected">
+        <h3>Files</h3>
+        <hr>
+        <template x-for="row in rows" :key="row.id">
+            <div style="margin-bottom: 10px;">
+                <small @click="fetchSingle(row)" style="cursor: pointer">
+                    <span x-text="row.username"></span>
+                    <span x-text="new Date(row.created_at).toLocaleString()"></span>
+                </small>
+            </div>
+        </template>
+    </div>
+
+    <div x-show="selected">
+        <button @click="selected = null; content = 'Loading...'">Back to List</button>
+        <hr>
+        <h4 x-text="'User: ' + activeUser"></h4>
+        <pre x-text="content"></pre>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        function app() {
+            return {
+                rows: [],
+                selected: false,
+                activeUser: '',
+                content: 'Loading...',
+
+                baseUrl: 'https://dkrlxecasaxmcnssuqdr.supabase.co/rest/v1/files',
+                headers: {
+                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrcmx4ZWNhc2F4bWNuc3N1cWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMjgxMjAsImV4cCI6MjA5MDkwNDEyMH0.QEmJEFctn4ld72DxamYkZIk-hutZ8FDSTo9zphW6ICk',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrcmx4ZWNhc2F4bWNuc3N1cWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMjgxMjAsImV4cCI6MjA5MDkwNDEyMH0.QEmJEFctn4ld72DxamYkZIk-hutZ8FDSTo9zphW6ICk'
+                },
+
+                fetchData() {
+                    const url = `${this.baseUrl}?select=id,username,created_at&order=created_at.desc`;
+                    fetch(url, { headers: this.headers })
+                        .then(r => r.json())
+                        .then(d => this.rows = d);
+                },
+
+                fetchSingle(row) {
+                    this.activeUser = row.username;
+                    this.selected = true;
+
+                    const url = `${this.baseUrl}?id=eq.${row.id}&select=items`;
+                    fetch(url, { headers: this.headers })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                try {
+                                    this.content = atob(data[0].items);
+                                } catch (e) {
+                                    this.content = "Error decoding file tree.";
+                                }
+                            }
+                        });
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
